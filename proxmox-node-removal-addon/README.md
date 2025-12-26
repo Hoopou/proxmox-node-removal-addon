@@ -36,11 +36,11 @@ apt remove proxmox-node-removal-addon
 ./build.sh
 ```
 
-## API Endpoints
+## Documentation
 
-- `GET /api2/json/cluster/nodes-removal` - List available actions
-- `POST /api2/json/cluster/nodes-removal/quit` - Leave the cluster
-- `POST /api2/json/cluster/nodes-removal/remove/{nodename}` - Remove a node
+- [Architecture](docs/ARCHITECTURE.md) - How the addon works
+- [API Reference](docs/API.md) - REST API endpoints
+- [Development](docs/DEVELOPMENT.md) - Building and testing
 
 ## File Structure
 
@@ -49,6 +49,7 @@ proxmox-node-removal-addon/
 ├── PVE/API2/NodeRemoval.pm   # REST API endpoints
 ├── www/.../ClusterTab.js     # UI button override
 ├── debian/                   # Package configuration
+├── docs/                     # Documentation
 └── build.sh                  # Build script
 ```
 
