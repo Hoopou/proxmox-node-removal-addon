@@ -14,9 +14,8 @@ override_dh_auto_install:
 	mkdir -p debian/proxmox-node-removal-addon/usr/share/perl5/pve-node-removal/PVE/API2
 	mkdir -p debian/proxmox-node-removal-addon/usr/share/pve-manager/js/pve-node-removal
 	
-	# Install Perl modules
-	cp PVE/NodeRemoval.pm debian/proxmox-node-removal-addon/usr/share/perl5/pve-node-removal/PVE/
+	# Install Perl API module
 	cp PVE/API2/NodeRemoval.pm debian/proxmox-node-removal-addon/usr/share/perl5/pve-node-removal/PVE/API2/
 	
 	# Install web UI
-	cp www/manager/node-removal/*.js debian/proxmox-node-removal-addon/usr/share/pve-manager/js/pve-node-removal/
+	cp www/manager/node-removal/ClusterTab.js debian/proxmox-node-removal-addon/usr/share/pve-manager/js/pve-node-removal/

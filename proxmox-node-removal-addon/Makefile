@@ -42,7 +42,6 @@ clean:
 test:
 	@echo "Running tests..."
 	@echo "Testing Perl modules..."
-	@perl -c PVE/NodeRemoval.pm
 	@perl -c PVE/API2/NodeRemoval.pm
 	@echo "All tests passed!"
 
