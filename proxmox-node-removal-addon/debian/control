@@ -1,0 +1,18 @@
+Source: proxmox-node-removal-addon
+Section: admin
+Priority: optional
+Maintainer: Your Name <your.email@example.com>
+Standards-Version: 4.5.0
+Build-Depends: debhelper-compat (= 13)
+Homepage: https://your-repo.com
+
+Package: proxmox-node-removal-addon
+Architecture: all
+Depends: proxmox-ve (>= 7.0)
+Description: Proxmox node removal addon
+ A Proxmox addon that provides automated node removal from cluster with:
+ - Automatic VM/container migration
+ - Safety validation checks
+ - Web UI integration
+ - Quorum awareness
+ - Ceph integration (planning)

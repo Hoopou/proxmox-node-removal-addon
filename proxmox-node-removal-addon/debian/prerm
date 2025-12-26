@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    remove|deconfigure)
+        # Clean up installed files
+        rm -f /usr/share/perl5/PVE/NodeRemoval.pm || true
+        rm -f /usr/share/perl5/PVE/API2/NodeRemoval.pm || true
+        rm -rf /usr/share/pve-manager/js/ext6-pve/manager/node-removal || true
+        
+        # Restart pveproxy
+        systemctl restart pveproxy || true
+        
+        echo "Proxmox Node Removal Addon removed"
+        ;;
+    
+    upgrade|failed-upgrade)
+        ;;
+    
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+exit 0

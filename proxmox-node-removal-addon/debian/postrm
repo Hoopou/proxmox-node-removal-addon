@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    remove|purge)
+        echo "Removing Proxmox Node Removal Addon..."
+
+        # Remove API module
+        rm -f /usr/share/perl5/PVE/API2/NodeRemoval.pm
+
+        # Remove patch from Cluster.pm
+        CLUSTER_PM="/usr/share/perl5/PVE/API2/Cluster.pm"
+        if [ -f "$CLUSTER_PM" ] && grep -q "PVE::API2::NodeRemoval" "$CLUSTER_PM"; then
+            echo "  - Removing API patch..."
+            
+            # Remove use statement
+            sed -i '/use PVE::API2::NodeRemoval;/d' "$CLUSTER_PM"
+            
+            # Remove register_method block (multi-line)
+            sed -i '/__PACKAGE__->register_method({/,/path => .nodes-removal.,/d' "$CLUSTER_PM"
+            
+            echo "  - API patch removed"
+        fi
+
+        # Restart pveproxy
+        if systemctl is-active --quiet pveproxy; then
+            echo "  - Restarting pveproxy..."
+            systemctl restart pveproxy
+        fi
+
+        echo "Proxmox Node Removal Addon removed."
+        ;;
+
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        ;;
+
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+exit 0

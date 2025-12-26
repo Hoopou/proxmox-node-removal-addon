@@ -1,0 +1,9 @@
+proxmox-node-removal-addon (1.0.0-1) pve; urgency=medium
+
+  * Initial release
+  * Node removal wizard
+  * Automated VM/container migration
+  * Safety checks and validation
+  * Web UI integration
+
+ -- Your Name <your.email@example.com>  Wed, 25 Dec 2025 00:00:00 +0000

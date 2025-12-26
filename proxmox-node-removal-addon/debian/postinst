@@ -1,0 +1,70 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+        echo "Installing Proxmox Node Removal Addon..."
+
+        # Create directories
+        mkdir -p /usr/share/perl5/PVE/API2
+        mkdir -p /usr/share/pve-manager/js/pve-node-removal
+
+        # Copy Perl modules
+        if [ -f /usr/share/perl5/pve-node-removal/PVE/API2/NodeRemoval.pm ]; then
+            cp /usr/share/perl5/pve-node-removal/PVE/API2/NodeRemoval.pm /usr/share/perl5/PVE/API2/
+            echo "  - Installed API module"
+        fi
+
+        # Copy web UI components  
+        if [ -d /usr/share/pve-manager/js/pve-node-removal ]; then
+            echo "  - Installed UI components"
+        fi
+
+        # Patch Proxmox Cluster API to register our endpoints
+        CLUSTER_PM="/usr/share/perl5/PVE/API2/Cluster.pm"
+        if [ -f "$CLUSTER_PM" ]; then
+            # Check if already patched
+            if ! grep -q "PVE::API2::NodeRemoval" "$CLUSTER_PM"; then
+                echo "  - Patching Cluster API..."
+                
+                # Backup original
+                cp "$CLUSTER_PM" "${CLUSTER_PM}.backup.$(date +%s)"
+                
+                # Add use statement after PVE::API2::ClusterConfig
+                sed -i 's/use PVE::API2::ClusterConfig;/use PVE::API2::ClusterConfig;\nuse PVE::API2::NodeRemoval;/' "$CLUSTER_PM"
+                
+                # Add register_method after jobs registration
+                sed -i "/path => 'jobs',/a\\
+\\
+__PACKAGE__->register_method({\\
+    subclass => \"PVE::API2::NodeRemoval\",\\
+    path => 'nodes-removal',\\
+});" "$CLUSTER_PM"
+                
+                echo "  - Cluster API patched"
+            else
+                echo "  - Cluster API already patched"
+            fi
+        fi
+
+        # Restart pveproxy to load new API endpoints
+        if systemctl is-active --quiet pveproxy; then
+            echo "  - Restarting pveproxy..."
+            systemctl restart pveproxy
+        fi
+
+        echo ""
+        echo "Proxmox Node Removal Addon installed successfully!"
+        echo "Navigate to Datacenter -> Cluster to see the Remove Node button."
+        ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
